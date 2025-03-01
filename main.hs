@@ -5,3 +5,5 @@
 -- starting with Spring
 
 -- Enum a => a -> [a] -> on hoogle -> enumFrom :: a -> [a] can be used for this question
+
+data Season = Spring | Summer | Autumn | Winter
