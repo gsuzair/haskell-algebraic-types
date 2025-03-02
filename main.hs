@@ -6,4 +6,13 @@
 
 -- Enum a => a -> [a] -> on hoogle -> enumFrom :: a -> [a] can be used for this question
 
+main :: IO ()
+main = do
+  let result = theSeasons Spring  
+  print result
+
 data Season = Spring | Summer | Autumn | Winter
+              deriving (Eq, Show, Enum)
+              
+theSeasons :: Season -> [Season]
+theSeasons n = enumFrom n
