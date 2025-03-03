@@ -160,3 +160,42 @@ monthToSeason month
   | month `elem` [June, July, August] = Summer
   | month `elem` [September, October, November] = Autumn
   | otherwise = Winter  -- Covers December, January, February
+
+-- 6.1.7. The Boolean type can be defined as follows:
+-- data MyBoolean = MyFalse | MyTrue
+-- deriving Show
+-- Present a function boolToMyBoolean that given a built-in Boolean returns the corresponding result
+-- of MyBoolean type. That is, if the input parameter is False the function produces MyFalse and if
+-- the input parameter is True the function returns MyTrue.
+-- Also define the inverse of this function, myBooleanToBool.
+
+main :: IO ()
+main = do
+  let result = boolToMyBoolean True
+  print result  -- Expected Output: MyTrue
+
+data MyBoolean = MyFalse | MyTrue
+                 deriving Show
+
+boolToMyBoolean :: Bool -> MyBoolean
+boolToMyBoolean True  = MyTrue
+boolToMyBoolean False = MyFalse
+
+-- 6.1.8. Define operators &:& and |:| that perform respectively the logical “and” and the logical “or” on
+-- the MyBoolean type. Use underscores (_) for a very concise definition.
+
+infixr 3 &:&
+infixl 6 |:|
+
+(&:&) :: MyBoolean -> MyBoolean -> MyBoolean
+(&:&) MyTrue MyTrue = MyTrue
+_      &:& _        = MyFalse
+
+(|:|) :: MyBoolean -> MyBoolean -> MyBoolean
+MyFalse |:| MyFalse = MyFalse
+_       |:| _       = MyTrue
+
+-- 6.1.9. Implement the functions myAnd and myOr that perform respectively the logical “and” and the logical
+-- “or” on a list of MyBoolean. myAnd of an empty list should be myTrue and myOr of an empty list is
+-- myFalse.
+
