@@ -123,3 +123,40 @@ enumToInt month = toEnum month
 -- in the interval, including the arguments. Write it in the same syntactic sugar you know from
 -- arithmetic sequences (e.g. [3..8]).
 
+main :: IO ()
+main = do
+  let result = monthFromTo January June
+  print result
+
+data Season = Spring | Summer | Autumn | Winter
+              deriving (Eq, Show, Enum)
+data Months = January | February | March | April | May | June | July | August | September | October | November | December
+              deriving (Eq, Show, Enum, Ord)
+
+monthFromTo :: Months -> Months -> [Months]
+monthFromTo a b = [a .. b]
+
+-- 6.1.6 Write a function monthToSeason which takes a month to its appropriate season. Assume that Mar,
+-- Apr, May correspond to Spring; Jun, Jul, Aug correspond to Summer; Sep, Oct, Nov correspond
+-- to Autumn and Jan, Feb, Dec correspond to Winter.
+-- For example,
+-- > monthToSeason Jan ==> Winter
+-- > monthToSeason Jul ==> Summer
+
+main :: IO ()
+main = do
+  let result = monthToSeason January
+  print result  -- Expected Output: Winter
+
+data Season = Spring | Summer | Autumn | Winter
+              deriving (Eq, Show, Enum)
+
+data Months = January | February | March | April | May | June | July | August | September | October | November | December
+              deriving (Eq, Show, Enum, Ord)
+
+monthToSeason :: Months -> Season
+monthToSeason month
+  | month `elem` [March, April, May] = Spring
+  | month `elem` [June, July, August] = Summer
+  | month `elem` [September, October, November] = Autumn
+  | otherwise = Winter  -- Covers December, January, February
