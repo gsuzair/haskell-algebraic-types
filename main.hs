@@ -184,6 +184,14 @@ boolToMyBoolean False = MyFalse
 -- 6.1.8. Define operators &:& and |:| that perform respectively the logical “and” and the logical “or” on
 -- the MyBoolean type. Use underscores (_) for a very concise definition.
 
+main :: IO ()
+main = do
+  let result = MyTrue &:& MyFalse |:| MyTrue
+  print result  -- Expected Output: MyTrue
+  
+data MyBoolean = MyFalse | MyTrue
+                 deriving Show
+
 infixr 3 &:&
 infixl 6 |:|
 
@@ -199,3 +207,54 @@ _       |:| _       = MyTrue
 -- “or” on a list of MyBoolean. myAnd of an empty list should be myTrue and myOr of an empty list is
 -- myFalse.
 
+main :: IO ()
+main = do
+  let result = myOr [MyTrue, MyFalse, MyTrue, MyTrue]
+  print result  -- Expected Output: MyTrue
+  
+data MyBoolean = MyFalse | MyTrue
+                 deriving Show
+
+myAnd::[MyBoolean] -> MyBoolean
+myAnd [] = MyTrue
+myAnd (MyTrue : myBooleans) =  myAnd myBooleans
+myAnd (MyFalse : _)         =  MyFalse
+
+myOr::[MyBoolean] -> MyBoolean
+myOr [] = MyFalse
+myOr (MyFalse : myBooleans) =  myOr myBooleans
+myOr (MyTrue : _)         =  MyTrue
+
+-- with map:
+-- myAnd' bs =  boolToMyBoolean (and (map myBooleanToBool bs))
+
+-- with folding:
+-- myAnd'' :: [MyBoolean] -> MyBoolean
+-- myAnd'' =  foldr (&:&) MyTrue
+
+-- myOr'' :: [MyBoolean] -> MyBoolean
+-- myOr'' =  foldr (|:|) MyFalse
+
+-- 6.1.10 Define an algebraic type for bits (called Bit), such that the 0 is represented by the letter O (i.e.,
+-- capital o) and the 1 is represented by the letter I (i.e., capital i). Arrange the constructors in the
+-- definition such that fromEnum gives just the right integer value. Then define a function bitsToInt
+-- of type [Bit] -> Int that translates the list of bits into the equivalent integer representation.
+-- For instance,
+-- > bitsToInt [] ==> 0
+-- > bitsToInt [I,O,I] ==> 5
+-- > bitsToInt [O,I,I,I] ==> 7
+
+data Bit = O | I
+    deriving (Show, Enum)
+
+bitsToInt :: [Bit] -> Int
+bitsToInt =  bitsToInt' 0
+  where
+    bitsToInt' n []     = n
+    bitsToInt' n (b:bs) = bitsToInt' (2*n + fromEnum b) bs
+
+-- bitsToInt' 0 [O, I, I, O]
+-- bitsToInt' (2*0 + 0) [I, I, O]  -- n = 0
+-- bitsToInt' (2*0 + 1) [I, O]     -- n = 1
+-- bitsToInt' (2*1 + 1) [O]        -- n = 3
+-- bitsToInt' (2*3 + 0) []         -- n = 6
