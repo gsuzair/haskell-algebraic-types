@@ -326,3 +326,24 @@ howOld (Person _ age) = age
 
 addAges :: Person -> Person -> Age
 addAges (Person _ (Years age1)) (Person _ (Years age2)) = Years (age1 + age2)
+
+-- 6.3.1  Handling Geometric Shapes (A long exercise for self-study): Now we combine
+-- Sum and Product types. Let us say that a Shape is either a Circle or a Rectangle. Thus, there are
+-- two ways of building an element of type Shape. One form is to supply the radius of a Circle, the other
+-- alternative is to give the length of the two sides of a Rectangle.
+-- Define the type Shape as an algebraic type.
+
+main :: IO ()
+main = do
+  let result = isRound (Circle pi)
+  print result
+
+data Shape = Circle Float 
+           | Rectangle Float Float
+           deriving Show
+
+isRound :: Shape -> Bool
+isRound (Circle _) = True
+isRound (Rectangle m o)
+      | m == 0 = True 
+      | otherwise = False
