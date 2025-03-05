@@ -258,3 +258,28 @@ bitsToInt =  bitsToInt' 0
 -- bitsToInt' (2*0 + 1) [I, O]     -- n = 1
 -- bitsToInt' (2*1 + 1) [O]        -- n = 3
 -- bitsToInt' (2*3 + 0) []         -- n = 6
+
+-- 6.2.1  Consider the sum abstract data type:
+-- data Number = Exact Int | Approx Float
+-- Define a function rounded that receives a Number and returns an integer. If the input parameter
+-- is an exact number (i.e., it has been constructed using Exact) the integer value corresponding to
+-- this number is returned. Otherwise, if the input parameter is an approximate number (i.e., it has
+-- been constructed using Approx) the value returned is the result of applying the built-in function
+-- round to the real number employed in the construction.
+-- For example,
+-- > rounded (Exact 10) ==> 10
+-- > rounded (Approx 10.9) ==> 11
+-- > rounded (Approx (-23)) ==> -23
+
+main :: IO ()
+main = do
+  let result = rounded (Approx 1.9)
+  print result
+
+data Number = Exact Int | Approx Float
+  deriving (Show)
+
+rounded :: Number -> Int
+rounded (Exact i)  = i
+rounded (Approx f) = round f
+
