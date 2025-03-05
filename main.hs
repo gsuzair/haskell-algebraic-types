@@ -344,6 +344,9 @@ data Shape = Circle Float
            | Rectangle Float Float
            deriving Show
 
+data Point = Point Float Float
+            deriving Show
+
 isRound :: Shape -> Bool
 isRound (Circle _) = True
 isRound (Rectangle m o)
@@ -357,4 +360,18 @@ isRound (Rectangle m o)
 getArea :: Shape -> Float
 getArea (Circle r) = pi * r^2
 getArea (Rectangle l w) = l * w
+
+-- 6.3.4 Points in the Cartesian plane (i.e., R^2) can be defined as follows:
+-- data Point = Point Float Float
+-- deriving Show
+-- Give a function dist that given two points in R^2
+-- computes the length of the shortest line between them. Recall that for two points (x1, y1) and (x2, y2) this distance can be computed by the formula:
+-- (y2 − y1)
+-- 2 + (x2 − x1)
+-- 2.
+-- For instance,
+-- > dist (Point 4 6) (Point 9 25) ==> 19.64688
+
+dist ::  Point -> Point -> Float
+dist (Point x1 y1) (Point x2 y2) = sqrt((y2^2 - y1^2) + (x2^2 - x1^2))
 
