@@ -347,6 +347,9 @@ data Shape = Circle Float
 data Point = Point Float Float
             deriving Show
 
+data Slope = Value Float | Infinite
+            deriving Show
+
 isRound :: Shape -> Bool
 isRound (Circle _) = True
 isRound (Rectangle m o)
@@ -375,3 +378,17 @@ getArea (Rectangle l w) = l * w
 dist ::  Point -> Point -> Float
 dist (Point x1 y1) (Point x2 y2) = sqrt((y2^2 - y1^2) + (x2^2 - x1^2))
 
+-- 6.3.5 The slope of a line in the plane containing the x and y axes is generally represented by the letter
+-- m, and is defined as the change in the y-coordinate divided by the corresponding change in the
+-- x-coordinate, between two distinct points on the line. Given two points (x1, y1) and (x2, y2), the
+-- change in x from one to the other is x2 − x1, while the change in y is y2 − y1. Thus:
+-- m =
+-- y2 − y1
+-- x2 − x1
+-- Observe that the slope of two points can be infinite when the x-coordinate of both points is the
+-- same (i.e., when x1 = x2).
+
+getSlope :: Point -> Point -> Slope
+getSlope (Point x1 y1) (Point x2 y2) 
+  | x1 == x2 = Infinite
+  | otherwise = Value ((y2 - y1) / (x2 - x1))
