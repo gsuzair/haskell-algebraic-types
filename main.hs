@@ -332,6 +332,8 @@ addAges (Person _ (Years age1)) (Person _ (Years age2)) = Years (age1 + age2)
 -- two ways of building an element of type Shape. One form is to supply the radius of a Circle, the other
 -- alternative is to give the length of the two sides of a Rectangle.
 -- Define the type Shape as an algebraic type.
+-- 6.3.2 Give a predicate isRound of type Shape -> MyBoolean that returns True if the input parameter
+-- is a Circle and False otherwise (The type MyBoolean was defined in Exercise 4.1.7).
 
 main :: IO ()
 main = do
@@ -347,3 +349,12 @@ isRound (Circle _) = True
 isRound (Rectangle m o)
       | m == 0 = True 
       | otherwise = False
+
+-- 6.3.3 Program a function to give the area of a geometrical object of type Shape.
+-- For instance,
+-- > getArea (Rectangle 16.9 68) ==> 1149.2
+      
+getArea :: Shape -> Float
+getArea (Circle r) = pi * r^2
+getArea (Rectangle l w) = l * w
+
