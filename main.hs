@@ -283,3 +283,46 @@ rounded :: Number -> Int
 rounded (Exact i)  = i
 rounded (Approx f) = round f
 
+-- 6.2.2 Instead of using a tuple we can define a type with a number of components, often called a product
+-- type. For example, consider the product types:
+-- data Age = Years Int
+-- deriving Show
+-- data Name = Name String String
+-- deriving Show
+-- data Person = Person Name Age
+-- deriving Show
+-- and the function:
+-- firstName :: Person -> String
+-- firstName (Person (Name first family) _) = first
+-- thus:
+-- > firstName (Person (Name "Ada" "Lovelace") (Years 36)) ==> "Ada"
+-- Note that the name for the type (e.g. Person) can coincide with the name for the constructor (also
+-- Person). This is because Haskell will always be able to tell from the context whether you mean
+-- the type or the constructor. Thus it is not only valid Haskell code to give type and constructor
+-- the same name in case of a product type, but it is also usual and recommended. We will therefore
+-- keep this convention for the rest of the exercise sheet. 
+-- Define the functions howOld and addAges (and their type signatures) that respectively return the
+-- age in Years of a given person and compute the sum of the ages of two persons. For the function
+-- addAges is required the result to be of type Age.
+-- For example,
+-- > howOld (Person (Name "Haskell" "Curry") (Years 81)) ==> Years 81
+-- > addAges (Person (Name "A" "L") (Years 10))
+-- (Person (Name "X" "Y") (Years 12)) ==> Years 22
+
+main :: IO ()
+main = do
+  let result = addAges (Person (Name "A" "L") (Years 10)) (Person (Name "X" "Y") (Years 12))
+  print result
+
+data Age = Years Int
+           deriving Show
+data Name = Name String String
+            deriving Show
+data Person = Person Name Age
+              deriving Show
+
+howOld :: Person -> Age
+howOld (Person _ age) = age
+
+addAges :: Person -> Person -> Age
+addAges (Person _ (Years age1)) (Person _ (Years age2)) = Years (age1 + age2)
