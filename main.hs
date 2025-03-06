@@ -485,6 +485,7 @@ overlap (Figure (Rectangle w1 h1) (Point x1 y1)) (Figure (Rectangle w2 h2) (Poin
 -- For instance,
 -- > size (Lit 10) ==> 0
 -- > size (Sub (Add (Lit 10) (Lit 5)) (Lit 1)) ==> 2
+--  Add the operations of multiplication and integer division to the type Expr, and redefine the functions eval and size to include the new cases.
 
 main :: IO ()
 main = do
@@ -503,4 +504,38 @@ size (Add e1 e2) = 1 + size e1 + size e2
 size (Sub e1 e2) = 1 + size e1 + size e2
 size (Mul e1 e2) = 1 + size e1 + size e2
 size (Div e1 e2) = 1 + size e1 + size e2
+
+-- 6.4.3 Instead of adding extra constructors to the Expr type (as in the previous question) it is possible to
+-- factor the definition as follows:
+-- data Expr = Lit Int
+-- | OpExp Op Expr Expr
+-- deriving Eq
+-- data Op = Add | Sub | Mul | Div
+-- deriving Eq
+-- Show how the functions eval and size are defined for this type. Then add the operation Mod.
+
+main :: IO ()
+main = do
+  let result =   size (OpExp Sub (OpExp Add (Lit 10) (Lit 5)) (Lit 1))
+  print result
+  
+data Expr = Lit Int
+  | OpExp Op Expr Expr
+  deriving Eq
+
+data Op = Add | Sub | Mul | Div
+  deriving Eq
+  
+eval :: Expr -> Int
+eval (Lit n) = n
+eval (OpExp Add e1 e2) = eval e1 + eval e2
+eval (OpExp Sub e1 e2) = eval e1 - eval e2
+eval (OpExp Mul e1 e2) = eval e1 * eval e2
+eval (OpExp Div e1 e2) = eval e1 `div` eval e2 
+
+
+size :: Expr -> Int
+size (Lit _) = 0
+size (OpExp _ e1 e2) = 1 + size e1 + size e2
+
 
