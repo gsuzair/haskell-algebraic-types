@@ -350,6 +350,10 @@ data Point = Point Float Float
 data Slope = Value Float | Infinite
             deriving Show
 
+data YIntercept = Intercept Float
+                  deriving Show
+
+
 isRound :: Shape -> Bool
 isRound (Circle _) = True
 isRound (Rectangle m o)
@@ -392,3 +396,39 @@ getSlope :: Point -> Point -> Slope
 getSlope (Point x1 y1) (Point x2 y2) 
   | x1 == x2 = Infinite
   | otherwise = Value ((y2 - y1) / (x2 - x1))
+
+-- 6.3.6 Lines in a Cartesian plane can be described algebraically by linear equations and linear functions. In
+-- two dimensions, the characteristic equation is often given by the slope-intercept form: y = mx + b,
+-- where m is the slope of the line, b is the y-intercept of the line and x is the independent variable
+-- of the function.
+-- The problem is that of finding the y-intercept from a given point (x, y) and slope m, which clearly
+-- can be obtained by: b = y − mx if the slope is finite. Otherwise, if the slope is infinite the line
+-- defined by (x, y) and m is parallel to the y-axis. Define an algebraic type YIntercept that either
+-- represents a value in the y-axis when the Slope is finite (i.e., it has the form Intercept v for
+-- some v of type Float) or it is Undefined when the Slope is Infinite. Then program the function
+-- getYIntercept of type Point -> Slope -> YIntercept for computing the y-intercept.
+-- For instance,
+-- > getYIntercept (Point 5 5) (Value 1) ==> Intercept 0.0
+-- > getYIntercept (Point (-5) 25) (Value 0.5) ==> Intercept 27.5
+-- > getYIntercept (Point 1 1) Infinite ==> Undefined
+
+
+getYIntercept::Point -> Slope -> YIntercept
+getYIntercept (Point x y) (Value m) = Intercept (y - m * x)
+getYIntercept _ Infinite = error "Cannot compute y-intercept for a vertical line"
+
+-- 6.3.7 Define an algebraic type Figure for geometrical objects that extends the information contained the
+-- type Shape. Thus, a Figure can be either a circle or a rectangle that in addition to the constructor’s
+-- parameters defined in Shape (i.e., the radius for the circle and the length of the two sides for a rectangle), must contain the center of the object represented as a Point. Call the constructor of
+-- this example Figure as well. Include deriving Show in your definition.
+-- The type Figure does not take account of the orientation of an object, so let us assume from now
+-- on that all rectangles lie with the longest of its two sides parallel to the x-axis, and the other side
+-- parallel to the y-axis. If the two sides are of the same length, obviously, the rectangle lies with its
+-- sides parallel to the axes.
+-- Define a function move of type Float -> Float -> Figure -> Figure which moves a geometrical
+-- object of type Figure by the two offsets given.
+-- For example,
+-- > move 1 2 (Figure (Circle pi) (Point 10 10))
+-- ==> Figure (Circle 3.141593) (Point 11.0 12.0)
+-- > move 10 (-10) (Figure (Rectangle 3 4) (Point 0 0))
+-- ==> Figure (Rectangle 3.0 4.0) (Point 10.0 (-10.0))
