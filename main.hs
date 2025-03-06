@@ -538,4 +538,71 @@ size :: Expr -> Int
 size (Lit _) = 0
 size (OpExp _ e1 e2) = 1 + size e1 + size e2
 
+-- 6.5.1 Mutually Recursive Types: It is possible to extend the type Expr so that it contains
+-- conditional expressions, IF b e1 e2, where e1 and e2 are expressions, and b is a Boolean expression.
+-- Thus:
+-- data IExpr = ILit Int |
+-- ADD IExpr IExpr |
+-- SUB IExpr IExpr |
+-- MUL IExpr IExpr |
+-- MOD IExpr IExpr |
+-- IF BExp IExpr IExpr
+-- The expression IF b e1 e2 evaluates to the value of e1 if b is True and otherwise it has the value of e2.
+-- 1. First the syntax. Define an algebraic type for BExp such that:
+--  Boolean literals are BLit True and BLit False.
+--  The conjunction of two Boolean expressions (AND) is True if both expressions have the value
+-- True and it is False otherwise.
+--  The disjunction of two Boolean expressions (OR) is False if both expressions have the value
+-- False and it is True otherwise.
+--  The negation of a Boolean expression (NOT) is True if the expression has the value False and
+-- it is True otherwise.
+--  The comparison of two integer expressions (EQUAL) is True when the two numerical expressions
+-- have equal values and it is False otherwise.
+
+main :: IO ()
+main = do
+  print $ bEval (Equal (ILit 1) (SUB (ILit 2) (ILit 1))) -- True
+  print $ iEval (IF (Equal (ILit 10) (ILit 10)) (ADD (ILit 1) (ILit 2)) (ILit 0)) -- 3
+  print $ bEval (Not (Equal (ILit 10) (SUB (ILit 11) (ILit 1)))) -- False
+  print $ iEval (IF (Not (Equal (ILit 3) (SUB (ILit 4) (ILit 1)))) (ILit 1) (ILit 10)) -- 10
+
+  
+-- Integer Expressions
+data IExpr
+  = ILit Int
+  | ADD IExpr IExpr
+  | SUB IExpr IExpr
+  | MUL IExpr IExpr
+  | MOD IExpr IExpr
+  | IF BExpr IExpr IExpr
+  deriving Show
+
+-- Boolean Expressions
+data BExpr
+  = BLit Bool
+  | And BExpr BExpr
+  | Or BExpr BExpr
+  | Not BExpr
+  | Equal IExpr IExpr
+  deriving Show
+
+-- Evaluating Integer Expressions
+iEval :: IExpr -> Int
+iEval (ILit n) = n
+iEval (ADD e1 e2) = iEval e1 + iEval e2
+iEval (SUB e1 e2) = iEval e1 - iEval e2
+iEval (MUL e1 e2) = iEval e1 * iEval e2
+iEval (MOD e1 e2) = iEval e1 `mod` iEval e2
+iEval (IF cond e1 e2) =
+  if bEval cond
+    then iEval e1
+    else iEval e2
+
+-- Evaluating Boolean Expressions
+bEval :: BExpr -> Bool
+bEval (BLit b) = b
+bEval (And b1 b2) = bEval b1 && bEval b2
+bEval (Or b1 b2) = bEval b1 || bEval b2
+bEval (Not b) = not (bEval b)
+bEval (Equal e1 e2) = iEval e1 == iEval e2
 
