@@ -471,3 +471,36 @@ overlap (Figure (Rectangle w1 h1) (Point x1 y1)) (Figure (Rectangle w2 h2) (Poin
     | x1 + w1 < x2  || x2 + w2 < x1  = False  -- One rectangle is completely to the left of the other
     | y1 + h1 < y2  || y2 + h2 < y1  = False  -- One rectangle is completely below the other
     | otherwise = True   
+
+-- 6.4.1 In the lecture the following algebraic type has been introduced:
+-- data Expr = Lit Int |
+-- Add Expr Expr |
+-- Sub Expr Expr
+-- Also in the lecture the following function for evaluating expressions has been presented:
+-- eval :: Expr -> Int
+-- eval (Lit n) = n
+-- eval (Add e1 e2) = (eval e1) + (eval e2)
+-- eval (Sub e1 e2) = (eval e1) - (eval e2)
+-- Define a function size which counts the number of operations in an expression.
+-- For instance,
+-- > size (Lit 10) ==> 0
+-- > size (Sub (Add (Lit 10) (Lit 5)) (Lit 1)) ==> 2
+
+main :: IO ()
+main = do
+  let result =   size (Sub (Add (Lit 10) (Lit 5)) (Lit 1))
+  print result
+  
+data Expr = Lit Int |
+  Add Expr Expr |
+  Sub Expr Expr |
+  Div Expr Expr |
+  Mul Expr Expr
+
+size :: Expr -> Int
+size (Lit _) = 0
+size (Add e1 e2) = 1 + size e1 + size e2
+size (Sub e1 e2) = 1 + size e1 + size e2
+size (Mul e1 e2) = 1 + size e1 + size e2
+size (Div e1 e2) = 1 + size e1 + size e2
+
