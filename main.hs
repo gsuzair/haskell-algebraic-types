@@ -353,6 +353,9 @@ data Slope = Value Float | Infinite
 data YIntercept = Intercept Float
                   deriving Show
 
+data Figure = Figure Shape Point
+            deriving Show
+
 
 isRound :: Shape -> Bool
 isRound (Circle _) = True
@@ -432,3 +435,8 @@ getYIntercept _ Infinite = error "Cannot compute y-intercept for a vertical line
 -- ==> Figure (Circle 3.141593) (Point 11.0 12.0)
 -- > move 10 (-10) (Figure (Rectangle 3 4) (Point 0 0))
 -- ==> Figure (Rectangle 3.0 4.0) (Point 10.0 (-10.0))
+
+move :: Float -> Float -> Figure -> Figure
+move f1 f2 (Figure (Circle r) (Point x y)) = Figure (Circle r) (Point (x + f1) (y + f2))
+move f1 f2 (Figure (Rectangle l w) (Point x y)) = Figure (Rectangle l w) (Point (x + f1) (y + f2))
+
