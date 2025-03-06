@@ -440,3 +440,34 @@ move :: Float -> Float -> Figure -> Figure
 move f1 f2 (Figure (Circle r) (Point x y)) = Figure (Circle r) (Point (x + f1) (y + f2))
 move f1 f2 (Figure (Rectangle l w) (Point x y)) = Figure (Rectangle l w) (Point (x + f1) (y + f2))
 
+-- 6.3.8 Define a function overlap to test whether two objects of type Figure overlap.
+-- Hint: For this you may need to define some auxiliary functions. The case for two circles is easy.
+-- Defining overlap for rectangles is a bit harder.
+-- You can try the following approach:
+-- Let’s define overlapping for two rectangles. Define a function leftOf, that takes the data of two
+-- rectangles (height, width and position), and determines whether the first rectangle is completely
+-- to the left of the second rectangle, i.e. whether all points of the first have a smaller x-coordinate
+-- than the smallest x-coordinate of the second. Define functions rightOf, above and below in a
+-- corresponding way and note that two rectangles overlap if the first one is neither left of, right of,
+-- above or below the other rectangle.
+-- To define overlapping for circles and rectangles, first divide the plane into 9 parts by extending the
+-- sides of the rectangle: Interiour, the infinite strip directly above, the quarter plane above left, the
+-- infinite strip directly to the left, and so on. Find out, in which of the parts the centre of the circle
+-- is. For each part, there is an easy overlapping detection function which you should be able to find.
+-- For example,
+-- > overlap (Figure (Circle 1.414213) (Point 0 0))
+-- (Figure (Circle 1.414213) (Point 2 2)) ==> False
+-- > overlap (Figure (Rectangle 2 8) (Point 5 0))
+-- (Figure (Circle 1) (Point 0 0)) ==> True
+-- > overlap (Figure (Circle 1.414214) (Point 0 0))
+-- (Figure (Circle 1.414214) (Point 2 2)) ==> True
+
+overlap :: Figure -> Figure -> Bool
+overlap (Figure (Circle r1) (Point x1 y1)) (Figure (Circle r2) (Point x2 y2))
+    | dist (Point x1 y1) (Point x2 y2) <= r1 + r2 = True
+    | otherwise = False
+    
+overlap (Figure (Rectangle w1 h1) (Point x1 y1)) (Figure (Rectangle w2 h2) (Point x2 y2))
+    | x1 + w1 < x2  || x2 + w2 < x1  = False  -- One rectangle is completely to the left of the other
+    | y1 + h1 < y2  || y2 + h2 < y1  = False  -- One rectangle is completely below the other
+    | otherwise = True   
