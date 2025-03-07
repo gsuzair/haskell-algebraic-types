@@ -655,3 +655,28 @@ lengthOfList :: List a    -> Int
 lengthOfList EmptyList =  0
 lengthOfList (Cons _ list) =  1 + lengthOfList list
 
+-- 6.7.1 Polymorphic Binary Trees: In the lecture, binary trees have been defined as follows:
+-- data Tree a = Empty |
+-- Leaf a |
+-- Node a (Tree a) (Tree a)
+-- deriving Show
+-- 1. Define a function howMany for computing the number of elements of a tree.
+-- For example,
+-- > howMany Empty ==> 0
+-- > howMany (Node ’a’ (Node ’b’ (Leaf ’c’) Empty) (Leaf ’d’)) ==> 4
+
+main :: IO ()
+main = do
+  let result = howMany (Node 'a' (Node 'b' (Leaf 'c') Empty) (Leaf 'd'))
+  print result
+
+data Tree a = Empty |
+              Leaf a |
+              Node a (Tree a) (Tree a)
+              deriving Show
+
+howMany :: Tree a              -> Int
+howMany    Empty               =  0
+howMany   (Leaf _)             =  1
+howMany   (Node _ tree1 tree2) =  1 + howMany tree1 + howMany tree2
+
