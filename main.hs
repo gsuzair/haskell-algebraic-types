@@ -639,3 +639,19 @@ eqPair (Pair a b) = a == b
 -- > isEmpty (Cons 2 (Cons 1 EmptyList)) ==> False
 -- > lengthOfList (Cons 5 (Cons 4 (Cons 3 (Cons 2 (Cons 1 EmptyList))))) ==> 5
 
+main :: IO ()
+main = do
+  let result =  lengthOfList (Cons 5 (Cons 4 (Cons 3 (Cons 2 (Cons 1 EmptyList)))))
+  print result
+
+data List a = EmptyList | Cons a (List a)
+    deriving (Eq, Ord, Show, Read)
+
+isEmpty :: List a    -> Bool
+isEmpty    EmptyList =  True
+isEmpty    _         =  False
+
+lengthOfList :: List a    -> Int
+lengthOfList EmptyList =  0
+lengthOfList (Cons _ list) =  1 + lengthOfList list
+
