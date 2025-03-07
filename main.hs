@@ -681,3 +681,26 @@ howMany   (Leaf _)             =  1
 howMany   (Node _ tree1 tree2) =  1 + howMany tree1 + howMany tree2
 
 -- max (depth tree1) (depth tree2) ensures that we take the larger depth between the two subtrees
+
+-- 6.7.2 Define a function depth which obtains the depth of a given tree. Recall that the depth of an empty
+-- tree is 0. The depth of a node is the length of the (shortest) path from the root to that node. The
+-- depth of a tree is the maximum depth of a node of the tree.
+-- For example,
+-- > depth (Leaf 100) ==> 1
+-- > depth (Node ’a’ (Node ’b’ (Leaf ’c’) Empty) (Leaf ’d’)) ==> 3
+
+depth :: Tree a -> Int
+depth    Empty  =  0
+depth   (Leaf _) = 1
+depth   (Node _ tree1 tree2) = 1 + max (depth tree1) (depth tree2)
+
+-- 6.7.3 A tree is reflected by swapping left and right subtrees recursively. Define a function reflect to
+-- reflect a tree.
+-- For instance,
+-- > reflect (Node ’a’ (Node ’b’ (Leaf ’c’) Empty) (Leaf ’d’))
+-- ==> Node ’a’ (Leaf ’d’) (Node ’b’ Empty (Leaf ’c’))
+
+reflect :: Tree a -> Tree a
+reflect Empty = Empty
+reflect (Leaf n) = Leaf n
+reflect (Node a tree1 tree2) = Node a (reflect tree2) (reflect tree1)
