@@ -680,3 +680,4 @@ howMany    Empty               =  0
 howMany   (Leaf _)             =  1
 howMany   (Node _ tree1 tree2) =  1 + howMany tree1 + howMany tree2
 
+-- max (depth tree1) (depth tree2) ensures that we take the larger depth between the two subtrees
