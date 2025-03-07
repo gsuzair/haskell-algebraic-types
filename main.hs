@@ -606,3 +606,36 @@ bEval (Or b1 b2) = bEval b1 || bEval b2
 bEval (Not b) = not (bEval b)
 bEval (Equal e1 e2) = iEval e1 == iEval e2
 
+
+-- 6.6.1 Polymorphic Types: Algebraic type definitions can contain type variables (e.g., a, b
+-- and so on), defining polymorphic types. The definitions are as before, with the type variable used in the
+-- definition appearing after the type name on the left-hand side of the definition.
+-- 1. Consider the following polymorphic algebraic type for pairs:
+-- data Pair a = Pair a a
+-- Define functions to swap the two components of a pair (swapPair) and to test the equality of the
+-- two components (eqPair).
+-- For example,
+-- > swapPair (Pair ’a’ ’b’) ==> Pair ’b’ ’a’
+-- > swapPair (Pair (iEval (ILit 1)) (iEval (ILit 2))) ==> Pair 2 1
+-- > eqPair (Pair "Haskell" "Type") ==> False
+-- > eqPair (Pair False False) ==> True
+
+data Pair a = Pair a a
+              deriving Show
+
+swapPair :: Pair a -> Pair a
+swapPair (Pair a b) = Pair b a
+
+eqPair :: Eq a => Pair a -> Bool
+eqPair (Pair a b) = a == b
+
+-- 6.6.2 Consider the following polymorphic definition for lists:
+-- data List a = EmptyList | Cons a (List a)
+-- deriving (Eq,Ord,Show,Read)
+-- Define functions to test whether a given list is empty (isEmpty) and to compute the length (in
+-- number of elements) of a list (lengthOfList).
+-- For example,
+-- > isEmpty EmptyList ==> True
+-- > isEmpty (Cons 2 (Cons 1 EmptyList)) ==> False
+-- > lengthOfList (Cons 5 (Cons 4 (Cons 3 (Cons 2 (Cons 1 EmptyList))))) ==> 5
+
