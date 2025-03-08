@@ -704,3 +704,65 @@ reflect :: Tree a -> Tree a
 reflect Empty = Empty
 reflect (Leaf n) = Leaf n
 reflect (Node a tree1 tree2) = Node a (reflect tree2) (reflect tree1)
+
+-- 6.7.4 In the lecture a function for tree traversal has been defined as follows:
+-- traversal :: Tree a -> [a]
+-- traversal Empty = []
+-- traversal (Leaf x) = [x]
+-- traversal (Node x l r) = traversal l ++ [x] ++ traversal r
+-- This is done by visiting the elements of the tree ‘in-order’, that is visiting first the left subtree, the
+-- the node (root) itself, then the right subtree.
+-- Program functions post and pre for traversing trees in ‘post-order’ and ‘pre-order’ respectively.
+-- Recall that in post-order first the left subtree is traversed (in post-order), then the right subtree is
+-- visited (in post-order) and finally the root node is considered. In pre-order first the root node is
+-- visited, then the left subtree is traversed (in pre-order) and finally the right subtree is visited (in
+-- pre-order).
+-- For example,
+-- > post (Node 1 (Node 2 (Leaf 3) (Leaf 4)) (Leaf 5)) ==> [3,4,2,5,1]
+-- > post (reflect (Node 1 (Node 2 (Leaf 3) (Leaf 4)) (Leaf 5))) ==> [5,4,3,2,1]
+-- > pre (Node 1 (Node 2 (Leaf 3) (Leaf 4)) (Leaf 5)) ==> [1,2,3,4,5]
+-- > pre (reflect (Node 1 (Node 2 (Leaf 3) (Leaf 4)) (Leaf 5))) ==> [1,5,2,4,3]
+
+
+traversal :: Tree a -> [a]
+traversal Empty = []
+traversal (Leaf x) = [x]
+traversal (Node x l r) = traversal l ++ [x] ++ traversal r
+
+post :: Tree a -> [a]
+post Empty = []
+post (Leaf x) = [x]
+post (Node x l r) = post l ++ post r ++ [x]
+
+pre :: Tree a -> [a]
+pre Empty = []
+pre (Leaf x) = [x]
+pre (Node x l r) = [x] ++ pre l ++ pre r
+
+-- 6.7.5 Equivalent trees can be represented in various manners due to the redundancy in the constructors.
+-- For instance, each of the following pairs of trees are equivalent:
+-- > Node 1 Empty Empty ==> Leaf 1
+-- > Node ’a’ (Node ’b’ Empty (Node ’c’ Empty Empty)) (Node ’d’ Empty Empty)
+-- ==> Node ’a’ (Node ’b’ Empty (Leaf ’c’)) (Node ’d’ Empty Empty)
+-- > Node ’a’ (Node ’b’ Empty (Leaf ’c’)) (Node ’d’ Empty Empty)
+-- ==> Node ’a’ (Node ’b’ Empty (Leaf ’c’)) (Leaf ’d’)
+-- > Node 1 (Node 2 (Node 3 Empty Empty) (Node 4 Empty Empty)) (Node 5 Empty Empty)
+-- ==> Node 1 (Node 2 (Leaf 3) (Leaf 4)) (Leaf 5)
+-- The most economic way of representing a tree is by substituting all the occurrences of the form
+-- (Node x Empty Empty) by (Leaf x) for some arbitrary x. Define a function normalise for doing
+-- this tree normalisation.
+-- For instance,
+-- > normalise (Node ’a’ Empty Empty) ==> Leaf ’a’
+-- > normalise (Node ’a’ (Node ’b’ Empty (Leaf ’c’)) (Node ’d’ Empty Empty))
+-- ==> Node ’a’ (Node ’b’ Empty (Leaf ’c’)) (Leaf ’d’)
+-- > normalise (Node 1 (Node 2 (Node 3 Empty Empty) (Leaf 4)) (Leaf 5))
+-- ==> Node 1 (Node 2 (Leaf 3) (Leaf 4)) (Leaf 5)
+-- > normalise (Node 1 (Node 2 (Leaf 3) (Leaf 4)) (Leaf 5))
+-- ==> Node 1 (Node 2 (Leaf 3) (Leaf 4)) (Leaf 5)
+
+normalise :: Tree a -> Tree a
+normalise    Empty  =  Empty
+normalise   (Leaf a) = Leaf a
+normalise (Node a Empty Empty) = Leaf a
+normalise (Node a tree1 tree2) = Node a (normalise tree1) (normalise tree2)
+
