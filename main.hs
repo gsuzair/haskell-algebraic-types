@@ -766,3 +766,21 @@ normalise   (Leaf a) = Leaf a
 normalise (Node a Empty Empty) = Leaf a
 normalise (Node a tree1 tree2) = Node a (normalise tree1) (normalise tree2)
 
+-- 6.7.6  Give a higher-order function mapTree that applies a given input function to all the elements of a
+-- tree. For instance, considering the functions
+-- natural :: Int -> Bool
+-- natural n = (n >= 0)
+-- plusOne :: Int -> Int
+-- plusOne x = x + 1
+-- we get:
+-- > mapTree natural (Node 1 (Node (-2) (Leaf 3) (Leaf 4)) (Leaf (-5)))
+-- ==> Node True (Node False (Leaf True) (Leaf True)) (Leaf False)
+-- mapTree plusOne (Node 1 (Node (-2) (Leaf 3) (Leaf 4)) (Leaf (-5)))
+-- ==> Node 2 (Node (-1) (Leaf 4) (Leaf 5)) (Leaf (-4))
+
+mapTree :: (a -> b) -> Tree a -> Tree b
+mapTree     _          Empty   = Empty
+mapTree     func         (Leaf a) = Leaf $ func a
+mapTree     func         (Node a tree1 tree2) =
+    Node (func a) (mapTree func tree1) (mapTree func tree2)
+
