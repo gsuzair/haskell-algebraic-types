@@ -784,3 +784,19 @@ mapTree     func         (Leaf a) = Leaf $ func a
 mapTree     func         (Node a tree1 tree2) =
     Node (func a) (mapTree func tree1) (mapTree func tree2)
 
+-- 6.7.7 Program a function:
+-- listsToTree :: Eq a => [a] -> [a] -> Tree a
+-- that receives the pre-order and in-order traversals of a tree, and re-constructs the original tree from
+-- which this traversals where obtained. For this, assume that the input traversals are always correct
+-- and that the labels at the nodes are unique (i.e., there is no repetition). The result should be
+-- presented in normalised tree format.
+-- Hint: For manipulating the lists that represent the tree traversals, you may need both to define
+-- some auxiliary functions and to use some built-in list functions.
+-- For instance,
+-- Since
+-- > pre (Node 1 (Node 2 (Leaf 3) (Leaf 4)) (Leaf 5)) ==> [1,2,3,4,5]
+-- and
+-- > traverse (Node 1 (Node 2 (Leaf 3) (Leaf 4)) (Leaf 5)) ==> [3,2,4,1,5]
+-- then
+-- > listsToTree [1,2,3,4,5] [3,2,4,1,5]
+-- ==> Node 1 (Node 2 (Leaf 3) (Leaf 4)) (Leaf 5)
