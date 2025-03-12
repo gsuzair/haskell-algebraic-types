@@ -809,3 +809,24 @@ isaprefix _ [] = False -- A non-empty list cannot be a prefix of an empty list
 isaprefix (f:fs) (s:sc)
     | f == s    = isaprefix fs sc  -- If elements match, continue checking
     | otherwise = False            -- If elements don't match, not a prefix
+
+-- One list is a sublist of another if the elements of the first occur in the second, in
+-- the same order as a contiguous subsequence (i.e., without gaps). Using the function
+-- isaprefix or otherwise define a Haskell function (predicate) isasublist with the
+-- most general possible type, which takes two lists of the same type and decides whether
+-- or not (returning True or False, respectively) the first list is a sublist of the second.
+-- Recall that the empty list is a sublist of any other list.
+-- As an illustration, consider the following execution scenarios,
+-- Main> isasublist [1,2,3] [0,1,2,3,4]
+-- True :: Bool
+-- Main> isasublist [1,2,3] [1,2,10,2,3,11]
+-- False :: Bool
+-- Main> isasublist "Chip" "Fish&Chips"
+-- True :: Bool
+
+isasublist :: Eq a => [a] -> [a] -> Bool
+isasublist [] _ = True
+isasublist _ [] = False
+isasublist (f:fs) (s:sc)
+    | isaprefix (f:fs) (s:sc) = True
+    | otherwise = isasublist (f:fs) sc
