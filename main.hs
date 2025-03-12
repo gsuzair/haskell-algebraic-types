@@ -36,7 +36,7 @@ theSeasons :: Season -> [Season]
 theSeasons n = enumFrom n
 
 -- second approach:
--- theSeasons n = [n ..]
+theSeasons' n = [n ..]
 
 -- third approach:
 main :: IO ()
@@ -248,11 +248,12 @@ data Bit = O | I
     deriving (Show, Enum)
 
 bitsToInt :: [Bit] -> Int
-bitsToInt =  bitsToInt' 0
+bitsToInt bs =  bitsToInt' 0 bs
   where
     bitsToInt' n []     = n
     bitsToInt' n (b:bs) = bitsToInt' (2*n + fromEnum b) bs
 
+-- fromEnum convert O and I to 0 and 1
 -- bitsToInt' 0 [O, I, I, O]
 -- bitsToInt' (2*0 + 0) [I, I, O]  -- n = 0
 -- bitsToInt' (2*0 + 1) [I, O]     -- n = 1
