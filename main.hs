@@ -784,6 +784,44 @@ mapTree     func         (Leaf a) = Leaf $ func a
 mapTree     func         (Node a tree1 tree2) =
     Node (func a) (mapTree func tree1) (mapTree func tree2)
 
+-- Binary trees can be defined as follows:
+-- data Tree a = Empty |
+-- Node a (Tree a) (Tree a)
+-- deriving(Show)
+-- On the other hand, the concept of isomorphism defines when unordered binary trees
+-- are essentially the same. Two binary trees T1 and T2 are isomorphic if T2 can be
+-- obtained from T1 by reordering the branches of the subtrees of T1.
+-- Obviously, two empty binary trees are isomorphic. Otherwise, two binary trees are
+-- isomorphic if they have identical elements at the node and either both the left subtrees
+-- and the right subtrees are isomorphic; or the left subtree of one is isomorphic with the
+-- right subtree of the other and the two other subtrees are isomorphic, too.
+-- Define a Haskell predicate isoTree Tree1 Tree2, which returns True if Tree1 and
+-- Tree2 are isomorphic.
+
+
+main :: IO ()
+main = do
+  let tree1 = Node 1 (Node 2 Empty Empty) (Node 3 Empty Empty)
+      tree2 = Node 1 (Node 3 Empty Empty) (Node 2 Empty Empty)
+      result = isoTree tree1 tree2
+  print result
+
+isoTree :: Eq a => Tree a -> Tree a -> Bool
+-- If both trees are empty, they are isomorphic
+isoTree Empty Empty = True
+-- If one tree is empty and the other is not, they are not isomorphic
+isoTree Empty _ = False
+isoTree _ Empty = False
+-- If both are Leaf nodes, check if their values are equal
+isoTree (Leaf a) (Leaf b) = a == b
+-- If both are Node nodes, check isomorphism in two ways:
+-- 1. Without swapping
+-- 2. With swapping the left and right subtrees
+isoTree (Node _ left1 right1) (Node _ left2 right2) =
+    (isoTree left1 left2 && isoTree right1 right2)  -- Without swapping
+    || (isoTree left1 right2 && isoTree right1 left2)  -- With swapping
+
+
 -- One list is a prefix of another if the elements of the first occur in the second at the
 -- beginning and in the same order. For instance, [], [10], [10, 17], [10, 17, 9]
 -- and [10, 17, 9, 28] are all prefixes of [10, 17, 9, 28]. Note that the empty
@@ -867,3 +905,107 @@ main = do
     print (composeFun [fun1, fun2] 10)  -- Output: 22
     print (composeFun [fun2, fun1] 10)  -- Output: 21
     print (composeFun [] 10)            -- Output: 10
+
+
+-- Recall the Maybe monad defined as follows:
+-- data Maybe a = Nothing | Just a
+-- instance Monad Maybe where
+-- return = Just
+-- Nothing >>= \_ = Nothing
+-- Just a >>= f = f a
+-- A value of type Maybe a can be thought of as a value of type a that can possibly be absent.
+-- Absence is encoded by the constructor Nothing.
+-- Assume you have available an error-safe integer division function:
+-- safeDiv :: Integer -> Integer -> Maybe Integer,
+-- that divides the first argument by the second argument. In case the second argument is 0,
+-- you cannot divide by it. Hence, if y = 0 6 then safeDiv x y = Just(x/y) and if y = 0 then
+-- safeDiv x y = Nothing.
+-- Using safeDiv and the constructors return and >>= (or the do-notation if you prefer)
+-- for the Maybe monad, write a function
+-- f :: Integer -> Integer -> Integer -> Integer
+-- -> Maybe (Integer, Integer, Integer)
+-- such that for arbitrary integers a, b, c, d, the application f a b c d returns Just(x, y, z),
+-- where x = a/b, y = c/d and z = (x ∗ y)/(x + y) if no division by 0 occurs, otherwise
+-- f a b c d must return Nothing
+
+main :: IO ()
+main = do
+  let result = f 10 2 8 4
+  print result
+
+safeDiv :: Integer -> Integer -> Maybe Integer
+safeDiv x y 
+  | y == 0    = Nothing
+  | otherwise = Just (x `div` y)
+
+f :: Integer -> Integer -> Integer -> Integer -> Maybe (Integer, Integer, Integer)
+f a b c d = do
+  x <- safeDiv a b
+  y <- safeDiv c d
+  z <- safeDiv (x * y) (x + y)
+  return (x, y, z)
+
+
+-- Another use case of Maybe is a lookup function,
+-- lookup :: Eq a => a -> [(a, b)] -> Maybe b.
+-- It matches its first argument, the index, against the first component of each tuple in a list,
+-- and returns Just applied to the second component of the matching tuple, the result. Of
+-- course, if the index does not occur in the list, lookup returns Nothing. The list of type
+-- [(a,b)] can be thought of as a table with two columns, an index column where every value
+-- has type a, and a result column where every value has type b.
+-- When looking up values in a table we would often want the index to be unique, i.e. in a list
+-- of type [(a,b)], an index value of type a should only occur once. If it doesn’t occur, or if
+-- it occurs several times, the computation is unsuccessful. In the exercises, with the Maybe
+-- monad, we only considered the case of no occurrence. This time, we are going to handle
+-- the case of several occurrences.
+-- a) First, define a function
+-- filterTable :: Eq a => a -> [(a, b)] -> [(a, b)]
+-- which filters a table for all tuples where the first component matches the given index
+-- value of type a.
+-- b) The following parametric algebraic datatype
+-- data LookupResult b = NoResult | Unique b | NotUnique Integer
+-- deriving (Eq, Show)
+-- extends the Maybe b data type to encode the result of a lookup of a value in a table of
+-- type [(a, b)], which could be unsuccessful. The first constructor NoResult captures
+-- the possibility of no result, Unique encodes a single result value, and NotUnique
+-- encodes the possibility of several results, including the number of results as an integer.
+-- Using filterTable and the new type LookupResult b, define a new lookup function
+-- lookup’ :: Eq a => a -> [(a, b)] -> LookupResult b
+-- which computes a fully informative result whether the lookup is successful or not.
+
+main :: IO ()
+main = do
+  let table = [(1, "A"), (2, "B"), (1, "C"), (3, "D"), (1, "E")]
+  let result1 = lookupNew 1 table
+  let result2 = lookupNew 2 table
+  let result3 = lookupNew 4 table
+  print result1
+  print result2
+  print result3
+
+filterTable :: Eq a => a -> [(a, b)] -> [(a, b)]
+filterTable ind ls = filter (\(x, _) -> x == ind) ls
+
+data LookupResult b = NoResult | Unique b | NotUnique Integer
+  deriving (Eq, Show)
+
+lookupNew :: Eq a => a -> [(a, b)] -> LookupResult b
+lookupNew ind ls =
+  case filterTable ind ls of
+    [] -> NoResult
+    [(x, b)] -> Unique b                       -- Exactly one match found
+    xs       -> NotUnique (fromIntegral (length xs))  -- Multiple matches found
+
+-- rotate 4 [20..30]
+-- [24,25,26,27,28,29,30,20,21,22,23]
+-- rotate 1 [20..30]
+-- [21,22,23,24,25,26,27,28,29,30,20]
+
+main :: IO ()
+main = do
+  let result = rotate 4 [20..30]
+  print result
+
+rotate :: Int -> [Int] -> [Int]
+rotate 0 xs = xs
+rotate n xs = rotate (n - 1) (tail xs ++ [head xs])
