@@ -830,3 +830,40 @@ isasublist _ [] = False
 isasublist (f:fs) (s:sc)
     | isaprefix (f:fs) (s:sc) = True
     | otherwise = isasublist (f:fs) sc
+
+
+-- Define a Haskell function composeFun together with its type, which takes a list of
+-- functions of type Int -> Int and an integer x and applies the composition of the
+-- functions in the list from left to right to x. The effect of composeFun on an empty
+-- list must be the same as applying the identity function to x.
+-- For example, consider the following two functions,
+-- fun1 :: Int -> Int
+-- fun1 x = x + 1
+-- fun2 :: Int -> Int
+-- fun2 x = x * 2.
+-- Then,
+-- Main> composeFun [fun1, fun2] 10
+-- 22 :: Int
+-- Main> composeFun [fun2, fun1] 10
+-- 21 :: Int
+-- and, of course,
+-- Main> composeFun [] 10
+-- 10 :: Int.
+
+fun1 :: Int -> Int
+fun1 x = x + 1
+
+fun2 :: Int -> Int
+fun2 x = x * 2
+
+-- Compose the functions
+composeFun :: [Int -> Int] -> Int -> Int
+composeFun [] x = x  -- Base case: if the list is empty, return x
+composeFun (f:fs) x = composeFun fs (f x)  -- Apply the first function f to x, then recursively apply the rest
+
+main :: IO ()
+main = do
+    -- Pass a list of functions [fun1, fun2]
+    print (composeFun [fun1, fun2] 10)  -- Output: 22
+    print (composeFun [fun2, fun1] 10)  -- Output: 21
+    print (composeFun [] 10)            -- Output: 10
